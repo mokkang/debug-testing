@@ -37,6 +37,10 @@ package_job:
   stage: package
   tags:
     - docker
+  
+  script:
+    - echo "Maven packaging"
+    - "mvn package"
 
 Deploy_job:
   stage: deploy
