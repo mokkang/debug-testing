@@ -5,7 +5,7 @@
 <settings>
   <servers>
     <server>
-      <id>gitlab-maven</id>
+      <id>jmokkang</id>
       <configuration>
         <httpHeaders>
           <property>
