@@ -22,10 +22,11 @@ stages:          # List of stages for jobs, and their order of execution
 package-job:       # This job runs in the build stage, which runs first.
   stage: package
   script:
-    - mvn clean
-    - mvn test
-    - mvn package
-    - mvn install
+     - echo 'yay'
+   # - mvn clean
+   # - mvn test
+   # - mvn package
+   # - mvn install
 #   - echo "Compile complete."
 
 
