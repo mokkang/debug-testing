@@ -3,3 +3,5 @@ pipelines:
     - step: build
       script:
         - curl -sSL https://download.sourceclear.com/ci.sh | sh
+        - java -jar pipeline-scan.jar --file verademo.war -id true
+
