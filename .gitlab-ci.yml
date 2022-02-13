@@ -1,66 +1,48 @@
-# This file is a template, and might need editing before it works on your project.
-# To contribute improvements to CI/CD templates, please follow the Development guide at:
-# https://docs.gitlab.com/ee/development/cicd/templates.html
-# This specific template is located at:
-# https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Getting-Started.gitlab-ci.yml
+variables:
+  MAVEN_OPTS: -Dmaven.repo.local=.m2/repository
 
-# This is a sample GitLab CI/CD configuration file that should run without any modifications.
-# It demonstrates a basic 3 stage CI/CD pipeline. Instead of real tests or scripts,
-# it uses echo commands to simulate the pipeline execution.
-#
-# A pipeline is composed of independent jobs that run scripts, grouped into stages.
-# Stages run in sequential order, but jobs within stages run in parallel.
-#
-# For more information, see: https://docs.gitlab.com/ee/ci/yaml/index.html#stages
+image: maven:latest
 
-stages:          # List of stages for jobs, and their order of execution
-  - package
-  - security
-  - security-results
-  - deploy
+stages:
+    - build
+    - test
+    - package
+    - deploy
 
-package-job:       # This job runs in the build stage, which runs first.
+
+cache:
+  paths:
+     - .m2/repository
+     - target
+
+build_job:
+  stage: build
+  tags:
+    - docker
+
+  script:
+    - echo "Maven compile started"
+    - "mvn compile"
+
+test_job:
+  stage: test
+  tags:
+    - docker
+
+  script:
+    - echo "maven test started"
+    - Maven test
+
+package_job:
   stage: package
-  script:
-     - git clone https://gitlab.com/jmokkang/verademo.git
-     - cd verademo && cd ./app
-     # - sudo bash curl --header "Private-Token: glpat-yt4Avd2qLy6r2NMPkNZ1" "https://gitlab.com/jmokkang/verademo/-/blob/main/app/pom.xml" >> myvera.jar
-     - mvn clean install https://gitlab.com/jmokkang/verademo/builds/jmokkang/verademo/.git/
-     - mvn -Dmaven.test.skip=true package
+  tags:
+    - docker
 
-    #/verademo/app/target/verademo.jar
-   # - mvn clean
-   # - mvn test
-   # - mvn package
-   # - mvn install
-#   - echo "Compile complete."
+Deploy_job:
+  stage: deploy
+   tags:
+    - docker
 
-
-sast-pipeline-scan:   # This job runs in the test stage.
-  stage: security    # It only starts when the job in the build stage completes successfully.
   script:
-    - curl -sSL https://download.sourceclear.com/ci.sh | sh
-    - java -jar /opt/veracode/pipeline-scan.jar -vid $VERACODE_API_KEY_ID -vkey $VERACODE_API_KEY_SECRET --file /scan/veracode/verademo.jar
-#pipelines:
- # default:
- #   - step:
- #     script:
-      
-sca-scan:
-    stage: security
-    script:
-      - curl -sSL https://download.sourceclear.com/ci.sh | sh -s scan /verademo
-      - srcclr scan ./* -vid c18f13a5756b5cb29d8ef8c25dac1eef -vkey 4dcbe9009265062c437da44db026c3ee297cd95d4f91ba21ab56a229364bb80ee12c22ac859b9cc8f53d96eed85f4217e0241071fd3fa6174d7a2114daaf2019 -action uploadandscan -createprofile true -appname 1344575 --allow-dirty
-      
-sast-results-to-gitlab:   # This job also runs in the test stage.
-  stage: security-results    # It can run at the same time as unit-test-job (in parallel).
-  script:
-    - echo "Linting code... This will take about 10 seconds."
-    - sleep 10
-    - echo "No lint issues found."
-
-publish-to-maven:      # This job runs in the deploy stage.
-  stage: deploy  # It only runs when *both* jobs in the test stage complete successfully.
-  script:
-    - echo "Deploying application..."
-    - echo "Application successfully deployed."
+    - echo "deploy started"
+    - mvn deploy
