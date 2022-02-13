@@ -17,10 +17,11 @@ COPY db /docker-entrypoint-initdb.d
 # Also install the fortune-mod fortune game
 # https://docs.microsoft.com/en-us/dotnet/core/install/linux-ubuntu
 RUN apt-get update \
-    && apt-get -y install openjdk-8-jdk-headless openjdk-8-jre-headless maven fortune-mod iputils-ping \
+    && apt-get -y install maven openjdk-8-jdk-headless openjdk-8-jre-headless maven fortune-mod iputils-ping \
     && ln -s /usr/games/fortune /bin/ \
     && rm -rf /var/lib/apt/lists/*
-
+    && mvn clean compile ./app/pom.xml 
+	
 COPY entrypoint.sh /
 RUN chmod +x /entrypoint.sh
 
