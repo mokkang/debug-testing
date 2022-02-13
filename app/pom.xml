@@ -161,7 +161,7 @@
              </target>
              </configuration>
              <goals>
-             <goal>run</goal>
+             <goal>package</goal>
              </goals>
              </execution>
              </executions>
