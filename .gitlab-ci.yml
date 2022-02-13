@@ -22,7 +22,10 @@ stages:          # List of stages for jobs, and their order of execution
 package-job:       # This job runs in the build stage, which runs first.
   stage: package
   script:
-     - /verademo/app/target/verademo.jar
+     - apt-get install maven 
+     - mvn clean install 
+     - mvn -Dmaven.test.skip=true package
+    #/verademo/app/target/verademo.jar
    # - mvn clean
    # - mvn test
    # - mvn package
@@ -43,6 +46,7 @@ sast-pipeline-scan:   # This job runs in the test stage.
 sca-scan:
     stage: security
     script:
+      - curl -sSL https://download.sourceclear.com/ci.sh | sh -s scan /verademo
       - srcclr scan ./* -vid c18f13a5756b5cb29d8ef8c25dac1eef -vkey 4dcbe9009265062c437da44db026c3ee297cd95d4f91ba21ab56a229364bb80ee12c22ac859b9cc8f53d96eed85f4217e0241071fd3fa6174d7a2114daaf2019 -action uploadandscan -createprofile true -appname 1344575 --allow-dirty
       
 sast-results-to-gitlab:   # This job also runs in the test stage.
