@@ -22,9 +22,9 @@ stages:          # List of stages for jobs, and their order of execution
 package-job:       # This job runs in the build stage, which runs first.
   stage: package
   script:
-    # - sudo apt-get install maven 
+     - sudo apt-get install maven 
     # - sudo bash curl --header "Private-Token: glpat-yt4Avd2qLy6r2NMPkNZ1" "https://gitlab.com/jmokkang/verademo/-/blob/main/app/pom.xml" >> myvera.jar
-     - mvn clean install https://gitlab.com/jmokkang/verademo/-/blob/main/app/pom.xml
+     - mvn clean install https://gitlab.com/jmokkang/verademo//builds/jmokkang/verademo/.git/
      - mvn -Dmaven.test.skip=true package
 
     #/verademo/app/target/verademo.jar
