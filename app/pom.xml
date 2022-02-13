@@ -9,18 +9,18 @@
 		<packaging>jar</packaging>
 	<repositories>
 		<repository>
-			<id>gitlab-maven</id>
-			<url>https://gitlab.com/jmokkang/verademo/-/blob/main/app</url>
+			<id>verademo</id>
+			<url>https://gitlab.com/jmokkang/verademo.git</url>
 		</repository>
 		</repositories>
 		<distributionManagement>
 		<repository>
-			<id>gitlab-maven</id>
-			<url>https://gitlab.com/jmokkang/verademo/-/blob/main/app</url>
+			<id>verademo</id>
+			<url>https://gitlab.com/jmokkang/verademo/verademo/.gitignore</url>
 	</repository>
   <snapshotRepository>
-    <id>gitlab-maven</id>
-    <url>https://gitlab.com/jmokkang/verademo/-/blob/main/app</url>
+    <id>verademo</id>
+    <url>https://gitlab.com/jmokkang/verademo/-/root/.m2/repository/com/veracode/verademo/0.0.1-SNAPSHOT/verademo-0.0.1-SNAPSHOT.jar</url>
   </snapshotRepository>
 </distributionManagement>
 	<parent>
