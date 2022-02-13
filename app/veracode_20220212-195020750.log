@@ -1,0 +1,40 @@
+Property "veracode.action" has not been set
+Property "veracode.vid" has not been set
+Property "veracode.vkey" has not been set
+Property "veracode.criticality" has not been set
+Property "veracode.createprofile" has not been set
+Property "veracode.appname" has not been set
+Property "veracode.filepath" has not been set
+     [java] Executing '/usr/lib/jvm/java-11-openjdk-amd64/bin/java' with arguments:
+'-jar'
+'/mnt/c/Users/Peter/GitCrackin/verademo/VeracodeJavaAPI.jar'
+'-action'
+'${veracode.action}'
+'-vid'
+'${veracode.vid}'
+'-vkey'
+'${veracode.vkey}'
+'-criticality'
+'${veracode.criticality}'
+'-createprofile'
+'${veracode.createprofile}'
+'-version'
+'20220212-195020750'
+'-appname'
+'${veracode.appname}'
+'-filepath'
+'${veracode.filepath}'
+
+The ' characters around the executable and arguments are
+not part of the command.
+     [java] [2022.02.12 19:50:20.926] Invalid input
+     [java] VeracodeJavaAPI v22.1.9.3 cUnknown
+     [java] 
+     [java] Parsing error(s):
+     [java]   -action has an invalid argument.
+     [java]   -createprofile has an invalid argument.
+     [java]   -criticality has an invalid argument.
+     [java]   -filepath does not represent a valid path.
+     [java] 
+     [java] Java Result: 1
+UploadAndScan:  duration 0 seconds
