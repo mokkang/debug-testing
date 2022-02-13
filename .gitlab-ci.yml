@@ -5,6 +5,7 @@ image: maven:latest
 
 stages:
     - build
+    - scan
     - test
     - package
     - deploy
@@ -24,12 +25,17 @@ build_job:
     - echo "Maven compile started"
     - "mvn compile"
 
-scan-my-java-app:
+scanning_job:
+  stage: scan
   image: veracode/pipeline-scan:latest
   script:
-    - java -jar /opt/veracode/pipeline-scan.jar 
-        -vid $VERACODE_API_KEY_ID -vkey $VERACODE_API_KEY_SECRET 
-        --file /app/verademo.jar 
+    - 
+
+pipeline-scan_job:
+  stage: scan
+  image: veracode/pipeline-scan:latest
+  script:
+    - java -jar /opt/veracode/pipeline-scan.jar -vid $VERACODE_API_KEY_ID -vkey $VERACODE_API_KEY_SECRET --file /app/verademo.jar
 
 test_job:
   stage: test
