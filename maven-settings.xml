@@ -2,3 +2,18 @@
     <localRepository>/usr/share/maven/ref/repository</localRepository>
     <interactiveMode>false</interactiveMode>
 </settings>
+<settings>
+  <servers>
+    <server>
+      <id>gitlab-maven</id>
+      <configuration>
+        <httpHeaders>
+          <property>
+            <name>Private-Token</name>
+            <value>glpat-yt4Avd2qLy6r2NMPkNZ1</value>
+          </property>
+        </httpHeaders>
+      </configuration>
+    </server>
+  </servers>
+</settings>
