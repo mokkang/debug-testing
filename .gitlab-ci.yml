@@ -23,19 +23,21 @@ build_job:
 
   script:
     - echo "Maven compile started"
-    - "mvn compile"
+    - mvn compile
 
 scanning_job:
   stage: scan
-  image: veracode/pipeline-scan:latest
-  tags: 
-    - docker
+  image: ubuntu:latest
+  #tags: 
+   # - 
   script:
-    - java -jar /opt/veracode/pipeline-scan.jar -vid $VERACODE_API_KEY_ID -vkey $VERACODE_API_KEY_SECRET --file /app/verademo.jar
+    - srcclr scan /opt/veracode/VeracodeJavaAPI.jar -vid $VERACODE_API_KEY_ID -vkey $VERACODE_API_KEY_SECRET --file /app/verademo.jar -action uploadandscan --allow-dirty
 
 pipeline-scan_job:
   stage: scan
   image: veracode/pipeline-scan:latest
+  tags:
+    - docker
   script:
     - java -jar /opt/veracode/pipeline-scan.jar -vid $VERACODE_API_KEY_ID -vkey $VERACODE_API_KEY_SECRET --file /app/verademo.jar
 
@@ -46,7 +48,7 @@ test_job:
 
   script:
     - echo "maven test started"
-    - Maven test
+    - mvn test
 
 package_job:
   stage: package
@@ -55,13 +57,12 @@ package_job:
   
   script:
     - echo "Maven packaging"
-    - "mvn package"
+    - mvn package
 
 Deploy_job:
   stage: deploy
   tags:
     - docker
-
   script:
     - echo "deploy started"
     - mvn deploy
