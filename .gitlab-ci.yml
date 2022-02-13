@@ -40,7 +40,7 @@ package_job:
 
 Deploy_job:
   stage: deploy
-   tags:
+  tags:
     - docker
 
   script:
