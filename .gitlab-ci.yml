@@ -22,7 +22,7 @@ stages:          # List of stages for jobs, and their order of execution
 package-job:       # This job runs in the build stage, which runs first.
   stage: package
   script:
-     - ./app/target/verademo.jar
+     - /verademo/app/target/verademo.jar
    # - mvn clean
    # - mvn test
    # - mvn package
