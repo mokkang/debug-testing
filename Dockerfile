@@ -20,7 +20,8 @@ RUN apt-get update \
     && apt-get -y install maven openjdk-8-jdk-headless openjdk-8-jre-headless maven fortune-mod iputils-ping \
     && ln -s /usr/games/fortune /bin/ \
     && rm -rf /var/lib/apt/lists/*
-    && mvn clean compile ./app/pom.xml
+    && docker run --rm -it -p 127.0.0.1:8080:8080 --entrypoint bash -v "$(pwd)/app:/app" verademo
+    && mvn clean install ./app/pom.xml
 	
 COPY entrypoint.sh /
 RUN chmod +x /entrypoint.sh
@@ -28,6 +29,7 @@ RUN chmod +x /entrypoint.sh
 WORKDIR /app
 COPY app /app
 COPY maven-settings.xml /usr/share/maven/conf/settings.xml
+
 
 # Compile
 RUN mvn clean package && rm -rf target
