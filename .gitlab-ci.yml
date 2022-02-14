@@ -12,7 +12,7 @@ build_job:
     paths:
       - build/
     expire_in: 1 week
-  script: mvn clean build
+  script: mvn package
 
 pipeline scan:
   stage: scan
