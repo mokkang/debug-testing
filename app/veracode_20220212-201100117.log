@@ -1,0 +1,45 @@
+     [java] Executing '/usr/lib/jvm/java-11-openjdk-amd64/bin/java' with arguments:
+'-jar'
+'/mnt/c/Users/Peter/GitCrackin/verademo/VeracodeJavaAPI.jar'
+'-action'
+'UploadAndScan'
+'-vid'
+'2c445240cd44bec1443f146d1bbd167b'
+'-vkey'
+'86aee5900e0591c88a87380ac6fb86f9f1189fceda23907fb0de337eb6b4f76600236fe9075fa0efe88f4ee9fef586d61cd4498eaa98ad5a52029410a3d618d4'
+'-criticality'
+'VeryHigh'
+'-createprofile'
+'true'
+'-version'
+'20220212-201100117'
+'-appname'
+'1344575'
+'-filepath'
+'C:\Users\Peter\GitCrackin\verademo\app\target\'
+
+The ' characters around the executable and arguments are
+not part of the command.
+     [java] [2022.02.12 20:11:00.294] Invalid input
+     [java] VeracodeJavaAPI v22.1.9.3 cUnknown
+     [java] 
+     [java] Parsing error(s):
+     [java]   -filepath does not represent a valid path.
+     [java] 
+     [java] The following parameters are optional for the selected action:
+     [java]   -autorecreate                    -autoscan
+     [java]   -createsandbox                   -deleteincompletescan
+     [java]   -exclude                         -format
+     [java]   -include                         -inputfilepath
+     [java]   -logfilepath                     -maxretrycount
+     [java]   -pattern                         -phost
+     [java]   -ppassword                       -pport
+     [java]   -puser                           -replacement
+     [java]   -sandboxid                       -sandboxname
+     [java]   -scanallnonfataltoplevelmodules  -scanpollinginterval
+     [java]   -scantimeout                     -selected
+     [java]   -selectedpreviously              -teams
+     [java]   -toplevel                       
+     [java] 
+     [java] Java Result: 1
+UploadAndScan:  duration 0 seconds
