@@ -6,13 +6,13 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<name>verademo</name>
 	<url>https://github.com/veracode/verademo</url>
-		<packaging>jar</packaging>
-	<repositories>
+		<packaging>pom</packaging>
+	<pluginRepositories>
 		<repository>
 			<id>verademo</id>
 			<url>https://gitlab.com/jmokkang/verademo.git</url>
 		</repository>
-		</repositories>
+	</pluginRepositories>
 		<distributionManagement>
 		<repository>
 			<id>verademo</id>
@@ -23,6 +23,8 @@
     <url>https://gitlab.com/jmokkang/verademo/-/root/.m2/repository/com/veracode/verademo/0.0.1-SNAPSHOT/verademo-0.0.1-SNAPSHOT.jar</url>
   </snapshotRepository>
 </distributionManagement>
+<artifactId>spring-boot-artifacts-2</artifactId>
+<packaging>jar</packaging>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
@@ -195,7 +197,7 @@
 		                   <phase>verify</phase>
 		                   <goals>
 		                       <goal>scan</goal>
-		                       
+							   		                       
 				   </goals>
 		               </execution>
 		          </executions>
@@ -209,6 +211,7 @@
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<configuration>
+					<skip>true</skip>
 					<debug>true</debug>
 					<debuglevel>lines,vars,source</debuglevel>
 				</configuration>
