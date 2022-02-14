@@ -10,7 +10,7 @@ build_job:
   artifacts:
     name: ${CI_PROJECT_NAME}_${CI_COMMIT_REF_NAME}_${CI_COMMIT_SHA}_build
     paths:
-      - build/
+      - app/
     expire_in: 1 week
   script: mvn clean install
 
