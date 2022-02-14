@@ -24,6 +24,7 @@ build_job:
   script:
     - echo "Maven compile started"
     - mvn compile
+    - mvn com.srcclr:srcclr-maven-plugin:scan
 
 scanning_job:
   stage: scan
