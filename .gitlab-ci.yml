@@ -12,7 +12,7 @@ build_job:
     paths:
       - build/
     expire_in: 1 week
-  script: gradle clean build
+  script: mvn clean build
 
 pipeline scan:
   stage: scan
