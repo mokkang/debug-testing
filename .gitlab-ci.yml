@@ -1,69 +1,111 @@
-variables:
-  MAVEN_OPTS: -Dmaven.repo.local=.m2/repository
-
+# image must have JDK8+, gradle, curl, unzip
 image: maven:latest
 
 stages:
-    - build
-    - scan
-    - test
-    - package
-    - deploy
-
-
-cache:
-  paths:
-     - .m2/repository
-     - target
+  - build
+  - scan
 
 build_job:
   stage: build
-  tags:
-    - docker
+  artifacts:
+    name: ${CI_PROJECT_NAME}_${CI_COMMIT_REF_NAME}_${CI_COMMIT_SHA}_build
+    paths:
+      - build/
+    expire_in: 1 week
+  script: gradle clean build
 
-  script:
-    - echo "Maven compile started"
-    - mvn compile
-    - mvn com.srcclr:srcclr-maven-plugin:scan
-
-scanning_job:
+pipeline scan:
   stage: scan
-  image: ubuntu:latest
-  #tags: 
-   # - 
+  dependencies:
+    - build_job
+  artifacts:
+    name: ${CI_PROJECT_NAME}_${CI_COMMIT_REF_NAME}_${CI_COMMIT_SHA}_pipeline-results
+    paths:
+      - results.json
+    expire_in: 1 week
+    when: always
   script:
-    - srcclr scan /opt/veracode/VeracodeJavaAPI.jar -vid $VERACODE_API_KEY_ID -vkey $VERACODE_API_KEY_SECRET --file /app/verademo.jar -action uploadandscan --allow-dirty
+    - curl -O https://downloads.veracode.com/securityscan/pipeline-scan-LATEST.zip
+    - unzip pipeline-scan-LATEST.zip pipeline-scan.jar
+    - java -jar pipeline-scan.jar
+      --veracode_api_id "${VERACODE_API_ID}"
+      --veracode_api_key "${VERACODE_API_SECRET}"
+      --file "build/libs/sample.jar"
+      --fail_on_severity="Very High, High"
+      --fail_on_cwe="80"
+      --baseline_file "${CI_BASELINE_PATH}"
+      --timeout "${CI_TIMEOUT}"
+      --project_name "${CI_PROJECT_PATH}"
+      --project_url "${CI_REPOSITORY_URL}"
+      --project_ref "${CI_COMMIT_REF_NAME}"
+      --gl_issue_generation true
+#variables:
+#  MAVEN_OPTS: -Dmaven.repo.local=.m2/repository
+#
+#image: maven:latest
 
-pipeline-scan_job:
-  stage: scan
-  image: veracode/pipeline-scan:latest
-  tags:
-    - docker
-  script:
-    - java -jar /opt/veracode/pipeline-scan.jar -vid $VERACODE_API_KEY_ID -vkey $VERACODE_API_KEY_SECRET --file /app/verademo.jar
+#stages:
+#    - build
+#    - scan
+#    - test
+#    - package
+#    - deploy
+#
+#
+#
+#cache:
+# paths:
+#     - .m2/repository
+#     - target
 
-test_job:
-  stage: test
-  tags:
-    - docker
+#build_job:
+#  stage: build
+#  tags:
+#    - docker
 
-  script:
-    - echo "maven test started"
-    - mvn test
+#  script:
+#    - echo "Maven compile started"
+#    - mvn compile
+#    - mvn com.srcclr:srcclr-maven-plugin:scan
 
-package_job:
-  stage: package
-  tags:
-    - docker
+#scanning_job:
+#  stage: scan
+#  image: ubuntu:latest
+#  #tags: 
+#   # - 
+#  script:
+#    - srcclr scan /opt/veracode/VeracodeJavaAPI.jar -vid $VERACODE_API_KEY_ID -vkey $VERACODE_API_KEY_SECRET --file /app/verademo.jar -action #uploadandscan --allow-dirty
+
+#pipeline-scan_job:
+#  stage: scan
+#  image: veracode/pipeline-scan:latest
+#  tags:
+#    - docker
+#  script:
+#    - java -jar /opt/veracode/pipeline-scan.jar -vid $VERACODE_API_KEY_ID -vkey $VERACODE_API_KEY_SECRET --file /app/verademo.jar
+
+#test_job:
+#  stage: test
+#  tags:
+#    - docker
+
+#  script:
+#    - echo "maven test started"
+#    - mvn test
+
+#package_job:
+#  stage: package
+#  tags:
+#    - docker
   
-  script:
-    - echo "Maven packaging"
-    - mvn package
+#  script:
+#    - echo "Maven packaging"
+#    - mvn package
 
-Deploy_job:
-  stage: deploy
-  tags:
-    - docker
-  script:
-    - echo "deploy started"
-    - mvn deploy
+#Deploy_job:
+#  stage: deploy
+#  tags:
+#    - docker
+#  script:
+#    - echo "deploy started"
+#    - mvn deploy
