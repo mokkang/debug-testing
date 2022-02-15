@@ -1,42 +1,26 @@
-<<<<<<< HEAD
 variables:
-  MAVEN_OPTS: -Dmaven.repo.local=.m2/repository
+  MAVEN_OPTS:  -Dmaven.repo.local=.m2/repository
 
 image: maven:latest
 
 stages:
     - build
-    - scan
     - test
     - package
     - deploy
 
-
 cache:
   paths:
-     - .m2/repository
-     - target
+    - .m2/repository
+    - target
 
 build_job:
   stage: build
   tags:
     - docker
-
   script:
     - echo "Maven compile started"
-    - "mvn compile"
-
-scanning_job:
-  stage: scan
-  image: veracode/pipeline-scan:latest
-  script:
-    - 
-
-pipeline-scan_job:
-  stage: scan
-  image: veracode/pipeline-scan:latest
-  script:
-    - java -jar /opt/veracode/pipeline-scan.jar -vid $VERACODE_API_KEY_ID -vkey $VERACODE_API_KEY_SECRET --file /app/verademo.jar
+    - ./verademo/app/mvn compile
 
 test_job:
   stage: test
@@ -44,98 +28,104 @@ test_job:
     - docker
 
   script:
-    - echo "maven test started"
-    - Maven test
+    - echo "Maven test started"
+    - ./verademo/app/mvn test
 
 package_job:
   stage: package
   tags:
     - docker
-  
   script:
-    - echo "Maven packaging"
-    - "mvn package"
+    - echo "Maven packaging started"
+    - ./verademo/app/mvn package
 
 Deploy_job:
   stage: deploy
   tags:
     - docker
-
   script:
-    - echo "deploy started"
-    - mvn deploy
-=======
-image: maven:latest
+    - echo "Maven deploy started"
+    - ./verademo/app/mvn install
 
-stages:
-  - build
-  - scan
-  - store
-
-build_job:
-  stage: build
-  artifacts:
-    name: ${CI_PROJECT_NAME}_${CI_COMMIT_REF_NAME}_${CI_COMMIT_SHA}_build
-    paths:
-      - app/
-    expire_in: 1 week
-  script: mvn clean install
-
-Scan:
-  stage: scan
-  only:
-    - master
-  dependencies:
-    - build_job
-  artifacts:
-    name: ${CI_PROJECT_NAME}_${CI_COMMIT_REF_NAME}_${CI_COMMIT_SHA}_pipeline-results
-    paths:
-      - baseline.json
-    expire_in: 1 week
-    when: always
-  script:
-    - curl -O https://downloads.veracode.com/securityscan/pipeline-scan-LATEST.zip
-    - unzip pipeline-scan-LATEST.zip pipeline-scan.jar
-    - java -jar pipeline-scan.jar
-      --veracode_api_id "${VERACODE_API_ID}"
-      --veracode_api_key "${VERACODE_API_SECRET}"
-      --file "build/libs/sample.jar"
-      --fail_on_severity="Very High, High"
-      --fail_on_cwe="80"
-      --json_output_file="baseline.json"
-      --timeout "${CI_TIMEOUT}"
-      --project_name "${CI_PROJECT_PATH}"
-      --project_url "${CI_REPOSITORY_URL}"
-      --project_ref "${CI_COMMIT_REF_NAME}"
-
-Store Baseline:
+#Store Baseline:
   # Job will only run on master, if requested.
   # Will restore the above baseline artifact so it can be pulled down in other stages
-  stage: store
-  before_script:
-  only:
-    - master
-  when: manual
-  script:
-    - echo "Storing results.json as baseline.json"
-  artifacts:
-    name: baseline
-    paths:
-      - baseline.json # If you want to keep this longer than the GitLab default - press store in the web UI
+#  stage: store
+  #before_script:
+#  only:        
+#    - master
+#  when: manual
+#  script:
+##    - echo "Storing results.json as baseline.json"
+#  artifacts:
+#    name: baseline
+#    paths:
+#      - baseline.json # If you want to keep this longer than the GitLab default - press store in the web UI
 
-Baseline Scan:
+#Baseline Scan:
   # Job will run anywhere, except master. Will pull the baseline file and use it in the scan, if available
-  dependencies:
-    - Scan
-  except:
-    - master
-  stage: scan
-  script:
-    - git clean -dfx
-    - "curl -O https://downloads.veracode.com/securityscan/pipeline-scan-LATEST.zip"
-    - unzip pipeline-scan-LATEST.zip pipeline-scan.jar
-    - '[[ ! -f baseline.json ]] &&  curl --location "$CI_PROJECT_URL/-/jobs/artifacts/$CI_COMMIT_REF_NAME/raw/baseline.json?job=Store%20Baseline" -o baseline.json'
-    - java -jar pipeline-scan.jar --veracode_api_id "${VERACODE_KEY}" --veracode_api_key "${VERACODE_SECRET}" --file "<file_to_scan>" --project_name "${CI_PROJECT_PATH}" --project_url "${CI_PROJECT_URL}" --project_ref "${CI_COMMIT_REF_NAME}" --baseline_file baseline.json -jf results.json
+#  dependencies:
+#    - Scan
+#  except:
+#    - master
+#  stage: scan
+#  script:
+#    - git clean -dfx
+#    - "curl -O https://downloads.veracode.com/securityscan/pipeline-scan-LATEST.zip"
+#    - unzip pipeline-scan-LATEST.zip pipeline-scan.jar
+#    - '[[ ! -f baseline.json ]] &&  curl --location "$CI_PROJECT_URL/-/jobs/artifacts/$CI_COMMIT_REF_NAME/raw/baseline.json?job=Store%20Baseline" -o baseline.json'
+#    - java -jar pipeline-scan.jar --veracode_api_id "${VERACODE_KEY}" --veracode_api_key "${VERACODE_SECRET}" --file "<file_to_scan>" --project_name "${CI_PROJECT_PATH}" --project_url "${CI_PROJECT_URL}" --project_ref "${CI_COMMIT_REF_NAME}" --baseline_file baseline.json -jf results.json
+
+#variables:
+ # MAVEN_OPTS: -Dmaven.repo.local=.m2/repository
+
+#image: maven:latest
+
+
+#image: maven:latest
+
+#stages:
+#  - build
+#  - scan
+#  - store
+
+#build_job:
+#  stage: build
+#  artifacts:
+#    name: ${CI_PROJECT_NAME}_${CI_COMMIT_REF_NAME}_${CI_COMMIT_SHA}_build
+#    paths:
+#      - app/
+#    expire_in: 1 week
+#  script: "mvn clean install"#
+
+#Scan:
+#  stage: scan
+#  only:
+#    - master
+#  dependencies:
+#    - build_job
+#  artifacts:
+#    name: ${CI_PROJECT_NAME}_${CI_COMMIT_REF_NAME}_${CI_COMMIT_SHA}_pipeline-results
+#    paths:
+#      - baseline.json
+#    expire_in: 1 week
+#    when: always
+##  script:
+#    - curl -O https://downloads.veracode.com/securityscan/pipeline-scan-LATEST.zip
+#    - unzip pipeline-scan-LATEST.zip pipeline-scan.jar
+#    - java -jar pipeline-scan.jar
+#      --veracode_api_id "${VERACODE_API_ID}"
+#      --veracode_api_key "${VERACODE_API_SECRET}"
+#      --file "build/verademo.jar"
+#      --fail_on_severity="Very High, High"
+#      --fail_on_cwe="80"
+#      --json_output_file="baseline.json"
+#      --timeout "${CI_TIMEOUT}"
+#      --project_name "${CI_PROJECT_PATH}"
+#      --project_url "${CI_REPOSITORY_URL}"
+#      --project_ref "${CI_COMMIT_REF_NAME}"
+
+
 #variables:
 #  MAVEN_OPTS: -Dmaven.repo.local=.m2/repository
 #
@@ -206,4 +196,4 @@ Baseline Scan:
 #  script:
 #    - echo "deploy started"
 #    - mvn deploy
->>>>>>> main
+
