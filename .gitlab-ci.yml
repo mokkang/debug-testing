@@ -1,70 +1,9 @@
-<<<<<<< HEAD
 variables:
   MAVEN_OPTS: -Dmaven.repo.local=.m2/repository
 
-image: maven:latest
-
-stages:
-    - build
-    - scan
-    - test
-    - package
-    - deploy
+#image: maven:latest
 
 
-cache:
-  paths:
-     - .m2/repository
-     - target
-
-build_job:
-  stage: build
-  tags:
-    - docker
-
-  script:
-    - echo "Maven compile started"
-    - "mvn compile"
-
-scanning_job:
-  stage: scan
-  image: veracode/pipeline-scan:latest
-  script:
-    - 
-
-pipeline-scan_job:
-  stage: scan
-  image: veracode/pipeline-scan:latest
-  script:
-    - java -jar /opt/veracode/pipeline-scan.jar -vid $VERACODE_API_KEY_ID -vkey $VERACODE_API_KEY_SECRET --file /app/verademo.jar
-
-test_job:
-  stage: test
-  tags:
-    - docker
-
-  script:
-    - echo "maven test started"
-    - Maven test
-
-package_job:
-  stage: package
-  tags:
-    - docker
-  
-  script:
-    - echo "Maven packaging"
-    - "mvn package"
-
-Deploy_job:
-  stage: deploy
-  tags:
-    - docker
-
-  script:
-    - echo "deploy started"
-    - mvn deploy
-=======
 image: maven:latest
 
 stages:
