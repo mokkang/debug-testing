@@ -20,7 +20,7 @@ build_job:
     - docker
   script:
     - echo "Maven compile started"
-    - "mvn compile"
+    - "/app/mvn compile"
 
 test_job:
   stage: test
@@ -29,7 +29,7 @@ test_job:
 
   script:
     - echo "Maven test started"
-    - "mvn test"
+    - "/app/mvn test"
 
 package_job:
   stage: package
@@ -37,7 +37,7 @@ package_job:
     - docker
   script:
     - echo "Maven packaging started"
-    - "mvn package"
+    - "/app/mvn package"
 
 Deploy_job:
   stage: deploy
@@ -45,7 +45,7 @@ Deploy_job:
     - docker
   script:
     - echo "Maven deploy started"
-    - "mvn install"
+    - "/app/mvn install"
 
 #Store Baseline:
   # Job will only run on master, if requested.
