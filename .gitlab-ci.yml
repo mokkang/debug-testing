@@ -20,7 +20,7 @@ build_job:
     - docker
   script:
     - echo "Maven compile started"
-    - "/app/mvn compile"
+    - "bash /app/mvn compile"
 
 test_job:
   stage: test
@@ -29,7 +29,7 @@ test_job:
 
   script:
     - echo "Maven test started"
-    - "/app/mvn test"
+    - "bash /app/mvn test"
 
 package_job:
   stage: package
@@ -37,7 +37,7 @@ package_job:
     - docker
   script:
     - echo "Maven packaging started"
-    - "/app/mvn package"
+    - "bash /app/mvn package"
 
 Deploy_job:
   stage: deploy
@@ -45,14 +45,14 @@ Deploy_job:
     - docker
   script:
     - echo "Maven deploy started"
-    - "/app/mvn install"
+    - "bash /app/mvn install"
 
 #Store Baseline:
   # Job will only run on master, if requested.
   # Will restore the above baseline artifact so it can be pulled down in other stages
 #  stage: store
   #before_script:
-#  only:
+#  only:        
 #    - master
 #  when: manual
 #  script:
