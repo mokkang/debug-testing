@@ -12,7 +12,7 @@ compile-application:
     script:
       - mvn clean package
     artifacts:
-      name: verademo
+      name: verademo/app
       paths:
         - $HOME/app/
       expire_in: 5 week
