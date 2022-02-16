@@ -23,7 +23,7 @@ build_job:
 
 Software Composition Analysis:
     image: maven:latest
-    stage: sca
+    stage: scan
     script:
         - curl -sSL https://download.sourceclear.com/ci.sh | bash
         
