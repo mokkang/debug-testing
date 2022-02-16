@@ -1,4 +1,4 @@
-image: docker:latest
+image: ubuntu:latest
 
 stages:
     - build
@@ -7,7 +7,11 @@ stages:
 maven:
     stage: build
     script:
-        - apt install -y maven
+        - sudo apt-get update 
+        - sudo apt update -y 
+        - sudo apt install maven -y
+        - sudo apt install apache2 -y 
+#        - apt install -y maven 
         - mvn compile package
     artifacts:
         paths:
