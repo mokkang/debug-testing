@@ -30,13 +30,13 @@ Scan-Pipeline-SCA:
 Scan-Pipeline-SAST:
     image: openjdk:latest
     stage: scan
-    only:
-        - development
+    #only:
+    #    - development
     before_script:
         - curl -sSO https://downloads.veracode.com/securityscan/pipeline-scan-LATEST.zip
         - unzip pipeline-scan-LATEST.zip
     script:
-        - java -jar pipeline-scan.jar -vid ${VERACODE_API_ID} -vkey ${VERACODE_API_KEY} --file target/verademo.jar
+        - java -jar pipeline-scan.jar -vid ${VERACODE_API_KEY_ID} -vkey ${VERACODE_API_KEY_SECRET} --file target/verademo.jar
     artifacts:
         paths:
             - results.json
@@ -45,13 +45,13 @@ Scan-Pipeline-SAST:
 Scan-Pipline-SAST-Upload:
     image: openjdk:latest
     stage: scan
-    only:
-      - release
+    #only:
+    #  - release
     before_script:
         #- wget -q -O VeracodeJavaAPI.jar https://repo1.maven.org/maven2/com/veracode/vosp/api/wrappers/vosp-api-wrappers-java/${VERACODE_WRAPPER_VERSION}/vosp-api-wrappers-java-${VERACODE_WRAPPER_VERSION}.jar
         - curl -sSL -o VeracodeJavaAPI.jar https://repo1.maven.org/maven2/com/veracode/vosp/api/wrappers/vosp-api-wrappers-java/${VERACODE_WRAPPER_VERSION}/vosp-api-wrappers-java-${VERACODE_WRAPPER_VERSION}.jar
     script:
-        - java -jar VeracodeJavaAPI.jar -vid ${VERACODE_API_ID} -vkey ${VERACODE_API_KEY}
+        - java -jar VeracodeJavaAPI.jar -vid ${VERACODE_API_KEY_ID} -vkey ${VERACODE_API_SECRET_KEY}
           -action UploadAndScan -appname "verademo" -createprofile true -autoscan true -sandboxname "verademo_JINMOK"
           -filepath ./target/verademo.jar -version "Job ${CI_JOB_ID} in pipeline ${CI_PIPELINE_ID}"
     allow_failure: true
