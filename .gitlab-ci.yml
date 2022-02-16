@@ -36,7 +36,7 @@ development-upload-for-sast:
         - curl -sSO https://downloads.veracode.com/securityscan/pipeline-scan-LATEST.zip
         - unzip pipeline-scan-LATEST.zip
     script:
-        - java -jar pipeline-scan.jar -vid ${VERACODE_API_ID} -vkey ${VERACODE_API_KEY} --file target/verademo.war
+        - java -jar pipeline-scan.jar -vid ${VERACODE_API_ID} -vkey ${VERACODE_API_KEY} --file target/verademo.jar
     artifacts:
         paths:
             - results.json
@@ -51,7 +51,7 @@ release-upload-for-sast:
         - wget -q -O VeracodeJavaAPI.jar https://repo1.maven.org/maven2/com/veracode/vosp/api/wrappers/vosp-api-wrappers-java/${VERACODE_WRAPPER_VERSION}/vosp-api-wrappers-java-${VERACODE_WRAPPER_VERSION}.jar
     script:
         - java -jar VeracodeJavaAPI.jar -vid ${VERACODE_API_ID} -vkey ${VERACODE_API_KEY}
-          -action UploadAndScan -appname "verademo" -createprofile true -autoscan true -sandboxname "gitlab-release"
+          -action UploadAndScan -appname "verademo" -createprofile true -autoscan true -sandboxname "verademo_JINMOK"
           -filepath ./target/verademo.jar -version "Job ${CI_JOB_ID} in pipeline ${CI_PIPELINE_ID}"
     allow_failure: true
     
