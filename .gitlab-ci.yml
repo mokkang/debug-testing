@@ -1,51 +1,96 @@
-variables:
-  MAVEN_OPTS:  -Dmaven.repo.local=.m2/repository
-
-image: maven:latest
+image: docker:latest
 
 stages:
     - build
-    - test
-    - package
-    - deploy
+    - scan
 
-cache:
-  paths:
-    - .m2/repository
-    - target
+maven:
+    stage: build
+    script:
+        - apt install -y maven
+        - mvn compile package
+    artifacts:
+        paths:
+            - target/verademo.jar
 
-build_job:
-  stage: build
-  tags:
-    - docker
-  script:
-    - echo "Maven compile started"
-    - ./verademo/app/mvn compile
+development-upload-for-sast:
+    stage: scan
+    only:
+        - development
+    script:
+        - java -jar $HOME/helpers/VeracodeJavaAPI.jar -vid ${VERACODE_API_ID} -vkey ${VERACODE_SECRET_KEY}
+          -action UploadAndScan -appname "Verademo" -createprofile false -autoscan true -sandboxname "gitlab-development"
+          -filepath ./target/verademo.war -version "Job ${CI_JOB_ID} in pipeline ${CI_PIPELINE_ID}"
+    allow_failure: true
+    
+release-upload-for-sast:
+    stage: scan
+    only:
+        - release
+    script:
+        - java -jar $HOME/helpers/VeracodeJavaAPI.jar -vid ${VERACODE_API_ID} -vkey ${VERACODE_SECRET_KEY}
+          -action UploadAndScan -appname "Verademo" -createprofile false -autoscan true -sandboxname "gitlab-release"
+          -filepath ./target/verademo.war -version "Job ${CI_JOB_ID} in pipeline ${CI_PIPELINE_ID}"
+    allow_failure: true
+    
+policy-upload-for-sast:
+    stage: scan
+    only:
+        - schedules
+        - master
+    script:
+        - java -jar $HOME/helpers/VeracodeJavaAPI.jar vid ${VERACODE_API_ID} -vkey ${VERACODE_SECRET_KEY}
+          -action UploadAndScan -appname "Verademo" -createprofile false -autoscan true
+          -filepath ./target/verademo.war -version "Job ${CI_JOB_ID} in pipeline ${CI_PIPELINE_ID}"
+          -scantimeout 15
+#variables:
+#  MAVEN_OPTS:  -Dmaven.repo.local=.m2/repository
 
-test_job:
-  stage: test
-  tags:
-    - docker
+#image: maven:latest
 
-  script:
-    - echo "Maven test started"
-    - ./verademo/app/mvn test
+#stages:
+#    - build
+#    - test
+##    - package
+ #   - deploy
 
-package_job:
-  stage: package
-  tags:
-    - docker
-  script:
-    - echo "Maven packaging started"
-    - ./verademo/app/mvn package
+#cache:
+#  paths:
+#    - .m2/repository
+#    - target
 
-Deploy_job:
-  stage: deploy
-  tags:
-    - docker
-  script:
-    - echo "Maven deploy started"
-    - ./verademo/app/mvn install
+#build_job:
+#  stage: build
+#  tags:
+#    - docker
+#  script:
+#    - echo "Maven compile started"
+#    - ./verademo/app/mvn compile
+
+#test_job:
+#  stage: test
+#  tags:
+#    - docker
+
+#  script:
+#    - echo "Maven test started"
+#    - ./verademo/app/mvn test
+
+#package_job:
+#  stage: package
+#  tags:
+#    - docker
+#  script:
+#    - echo "Maven packaging started"
+#    - ./verademo/app/mvn package
+
+#Deploy_job:
+#  stage: deploy
+#  tags:
+#    - docker
+#  script:
+#    - echo "Maven deploy started"
+#    - ./verademo/app/mvn install
 
 #Store Baseline:
   # Job will only run on master, if requested.
