@@ -10,15 +10,15 @@ build_job:
     image: maven:latest
     stage: build
     script:
-      - mvn clean package
+      - mvn package
     artifacts:
-      name: verademo/
+      name: verademo
       paths:
         -  target/
       expire_in: 5 week
     cache:
       paths:
-        - app/
+        - app/target/
         - .m2/repository/verademo/
 
 Software Composition Analysis:
