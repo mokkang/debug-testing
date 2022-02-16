@@ -5,7 +5,7 @@
 	<artifactId>verademo</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>verademo</name>
-	<url>https://github.com/veracode/verademo</url>
+	<url>https://gitlab.com/jmokkang/verademo/-/blob/main/app/pom.xml</url>
 <<<<<<< HEAD
 		<packaging>jar</packaging>
 	<repositories>
@@ -15,7 +15,7 @@
 >>>>>>> main
 		<repository>
 			<id>verademo</id>
-			<url>https://gitlab.com/jmokkang/verademo.git</url>
+			<url>https://gitlab.com/jmokkang/verademo/-/blob/main/app/pom.xml</url>
 		</repository>
 <<<<<<< HEAD
 		</repositories>
