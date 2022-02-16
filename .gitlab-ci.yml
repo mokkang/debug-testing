@@ -14,7 +14,7 @@ compile-application:
     artifacts:
       name: verademo
       paths:
-        - target/
+        - $HOME/app/
       expire_in: 5 week
     cache:
       paths:
