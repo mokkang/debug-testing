@@ -23,8 +23,8 @@ development-upload-for-sast:
         - development
     script:
         - java -jar $HOME/helpers/VeracodeJavaAPI.jar -vid ${VERACODE_API_ID} -vkey ${VERACODE_SECRET_KEY}
-          -action UploadAndScan -appname "Verademo" -createprofile false -autoscan true -sandboxname "gitlab-development"
-          -filepath ./target/verademo.war -version "Job ${CI_JOB_ID} in pipeline ${CI_PIPELINE_ID}"
+          -action UploadAndScan -appname "Verademo" -createprofile false -autoscan true -sandboxname "verademo-jinmok"
+          -filepath ./target/verademo.jar -version "Job ${CI_JOB_ID} in pipeline ${CI_PIPELINE_ID}"
     allow_failure: true
     
 release-upload-for-sast:
@@ -33,8 +33,8 @@ release-upload-for-sast:
         - release
     script:
         - java -jar $HOME/helpers/VeracodeJavaAPI.jar -vid ${VERACODE_API_ID} -vkey ${VERACODE_SECRET_KEY}
-          -action UploadAndScan -appname "Verademo" -createprofile false -autoscan true -sandboxname "gitlab-release"
-          -filepath ./target/verademo.war -version "Job ${CI_JOB_ID} in pipeline ${CI_PIPELINE_ID}"
+          -action UploadAndScan -appname "Verademo" -createprofile false -autoscan true -sandboxname "verademo-jinmok"
+          -filepath ./target/verademo.jar -version "Job ${CI_JOB_ID} in pipeline ${CI_PIPELINE_ID}"
     allow_failure: true
     
 policy-upload-for-sast:
@@ -45,8 +45,9 @@ policy-upload-for-sast:
     script:
         - java -jar $HOME/helpers/VeracodeJavaAPI.jar vid ${VERACODE_API_ID} -vkey ${VERACODE_SECRET_KEY}
           -action UploadAndScan -appname "Verademo" -createprofile false -autoscan true
-          -filepath ./target/verademo.war -version "Job ${CI_JOB_ID} in pipeline ${CI_PIPELINE_ID}"
+          -filepath ./target/verademo.jar -version "Job ${CI_JOB_ID} in pipeline ${CI_PIPELINE_ID}"
           -scantimeout 15
+          
 #variables:
 #  MAVEN_OPTS:  -Dmaven.repo.local=.m2/repository
 
