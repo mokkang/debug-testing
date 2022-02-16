@@ -12,14 +12,14 @@ build_job:
     script:
       - mvn package
     artifacts:
-      name: verademo
+      name: verademo.jar
       paths:
-        -  target/
+        -  verademo/app/target/
       expire_in: 5 week
     cache:
       paths:
         - app/target/
-        - .m2/repository/verademo/
+        - .m2/repository/com/veracode/verademo/app/
 
 Software Composition Analysis:
     image: maven:latest
