@@ -14,12 +14,12 @@ build_job:
     artifacts:
       name: verademo/app
       paths:
-        - $HOME/app/
+        - $HOME/verademo/app/
       expire_in: 5 week
     cache:
       paths:
-        - target/
-        - .m2/repository
+        - app/
+        - .m2/repository/app/
 
 Software Composition Analysis:
     image: maven:latest
