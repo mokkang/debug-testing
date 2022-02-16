@@ -6,7 +6,7 @@ stages:
     
 
 
-compile-application:
+build_job:
     image: maven:latest
     stage: build
     script:
