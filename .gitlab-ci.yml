@@ -21,13 +21,13 @@ build_job:
         - app/target/
         - .m2/repository/com/veracode/verademo/app/
 
-Software Composition Analysis:
+Scan-Pipeline-SCA:
     image: maven:latest
     stage: scan
     script:
         - curl -sSL https://download.sourceclear.com/ci.sh | bash
         
-development-upload-for-sast:
+Scan-Pipeline-SAST:
     image: openjdk:latest
     stage: scan
     only:
@@ -42,11 +42,11 @@ development-upload-for-sast:
             - results.json
     allow_failure: true
     
-release-upload-for-sast:
+Scan-Pipline-SAST-Upload:
     image: openjdk:latest
     stage: scan
-    only:
-        - release
+    #only:
+    #    - release
     before_script:
         - wget -q -O VeracodeJavaAPI.jar https://repo1.maven.org/maven2/com/veracode/vosp/api/wrappers/vosp-api-wrappers-java/${VERACODE_WRAPPER_VERSION}/vosp-api-wrappers-java-${VERACODE_WRAPPER_VERSION}.jar
     script:
@@ -55,12 +55,12 @@ release-upload-for-sast:
           -filepath ./target/verademo.jar -version "Job ${CI_JOB_ID} in pipeline ${CI_PIPELINE_ID}"
     allow_failure: true
     
-policy-upload-for-sast:
+Scan-Pipeline-SAST-Policy:
     image: openjdk:latest
     stage: scan
-    only:
-        - schedules
-        - master
+    #only:
+    #    - schedules
+     #   - master
     before_script:
             - wget -q -O VeracodeJavaAPI.jar https://repo1.maven.org/maven2/com/veracode/vosp/api/wrappers/vosp-api-wrappers-java/${VERACODE_WRAPPER_VERSION}/vosp-api-wrappers-java-${VERACODE_WRAPPER_VERSION}.jar
     script:
@@ -73,7 +73,7 @@ test_job:
   tags:
     - docker
   script:
-    - mvn test
+    - docker push jmokkang/verademo 
 
 #  script:
 #    - echo "Maven test started"
