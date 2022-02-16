@@ -45,8 +45,8 @@ Scan-Pipeline-SAST:
 Scan-Pipline-SAST-Upload:
     image: openjdk:latest
     stage: scan
-    #only:
-    #    - release
+    only:
+      - release
     before_script:
         #- wget -q -O VeracodeJavaAPI.jar https://repo1.maven.org/maven2/com/veracode/vosp/api/wrappers/vosp-api-wrappers-java/${VERACODE_WRAPPER_VERSION}/vosp-api-wrappers-java-${VERACODE_WRAPPER_VERSION}.jar
         - curl -sSL -o VeracodeJavaAPI.jar https://repo1.maven.org/maven2/com/veracode/vosp/api/wrappers/vosp-api-wrappers-java/${VERACODE_WRAPPER_VERSION}/vosp-api-wrappers-java-${VERACODE_WRAPPER_VERSION}.jar
@@ -61,16 +61,16 @@ Scan-Pipeline-SAST-Policy:
     stage: scan
     tags:
       - docker
-    #only:
-    #    - schedules
-     #   - master
+    only:
+        - schedules
+        - master
     before_script:
             - wget -q -O VeracodeJavaAPI.jar https://repo1.maven.org/maven2/com/veracode/vosp/api/wrappers/vosp-api-wrappers-java/${VERACODE_WRAPPER_VERSION}/vosp-api-wrappers-java-${VERACODE_WRAPPER_VERSION}.jar
     script:
         - java -jar VeracodeJavaAPI.jar -vid ${VERACODE_API_ID} -vkey ${VERACODE_API_KEY}
           -action UploadAndScan -appname "Verademo" -createprofile true -autoscan true
           -filepath ./target/verademo.jar -version "Job ${CI_JOB_ID} in pipeline ${CI_PIPELINE_ID}"
-          -scantimeout 15
+          -scantimeout 30
 test_job:
   stage: test
   tags:
