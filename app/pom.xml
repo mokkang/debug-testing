@@ -6,13 +6,22 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<name>verademo</name>
 	<url>https://github.com/veracode/verademo</url>
+<<<<<<< HEAD
 		<packaging>jar</packaging>
 	<repositories>
+=======
+		<packaging>pom</packaging>
+	<pluginRepositories>
+>>>>>>> main
 		<repository>
 			<id>verademo</id>
 			<url>https://gitlab.com/jmokkang/verademo.git</url>
 		</repository>
+<<<<<<< HEAD
 		</repositories>
+=======
+	</pluginRepositories>
+>>>>>>> main
 		<distributionManagement>
 		<repository>
 			<id>verademo</id>
@@ -23,6 +32,11 @@
     <url>https://gitlab.com/jmokkang/verademo/-/root/.m2/repository/com/veracode/verademo/0.0.1-SNAPSHOT/verademo-0.0.1-SNAPSHOT.jar</url>
   </snapshotRepository>
 </distributionManagement>
+<<<<<<< HEAD
+=======
+<artifactId>spring-boot-artifacts-2</artifactId>
+<packaging>jar</packaging>
+>>>>>>> main
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
@@ -180,6 +194,31 @@
 			             </goals>
 			             </execution>
 			             </executions>
+<<<<<<< HEAD
+			</plugin>
+
+			
+			        <plugin>
+			            <groupId>org.springframework.boot</groupId>
+			            <artifactId>spring-boot-maven-plugin</artifactId>
+			            <executions>
+					<execution>
+					  <goals>
+						<goal>repackage</goal>						
+					  </goals>
+					</execution>
+				   </executions>
+				</plugin>
+
+           
+		        <plugin>
+		            <groupId>com.srcclr</groupId>
+		            <artifactId>srcclr-maven-plugin</artifactId>
+		            <version>3.1.21</version>
+		            <configuration>
+		                <!--- Add configuration details here-->
+		                <apiToken>eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjQ4ODk1LCJleHAiOjE2NDQ4MzExMjYsImF1dGhvcml0aWVzIjoiQUdFTlQiLCJqdGkiOiIwNDdjYTFiZC0yNGNhLTQ4ZmQtYmJmYS1kNjQ2OTJmZmNhZWIiLCJjbGllbnRfaWQiOiIiLCJzY29wZSI6W119.FB42Czn6uHQ6h8UHExGqaPtGrTINMqT0TE5uXpFi1YqXkM-03mU_XqEqHk-NAl01wK16VZpiBS8Fuq1yKLZEBgPOYdcRA7RYpMHXn1lQ-Rns5Z8JCYoP3ltB2gfUVjQwaYbA8MisXeYsYg-vwGleuXNKPPU44L-Rzoo4bAcETfQ</apiToken>
+=======
 			</plugin>           
 		        <plugin>
 		            <groupId>com.srcclr</groupId>
@@ -188,6 +227,7 @@
 		            <configuration>
 		                <!--- Add configuration details here-->
 		                <apiToken>eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjQ4ODUzLCJleHAiOjE2NDQ3MjczNDUsImF1dGhvcml0aWVzIjoiQUdFTlQiLCJqdGkiOiI3MWUzYjhhZi03NjlmLTRmNDQtOWQ2Ni02YjRiNjQxYTM5ZGYiLCJjbGllbnRfaWQiOiIiLCJzY29wZSI6W119.Yj1wkg25uxbIn8xvXyjSxJYYWr6EoGFnbTdWkgE--EJDbyYPPckbL8blgBQdaIy0sov0LBmqLYQr8C7SKwKKQfpDKOQ-l1wY5d86jSxuV1sr_k0ltwqkNeIR7xWkziJOiumaVeAHBxMyDnK7fDkasFMOwiEAvC5ReqdBKnCrkXo</apiToken>
+>>>>>>> main
 		           </configuration>
 		           <executions>
 		               <execution>
@@ -195,7 +235,11 @@
 		                   <phase>verify</phase>
 		                   <goals>
 		                       <goal>scan</goal>
+<<<<<<< HEAD
 		                       
+=======
+							   		                       
+>>>>>>> main
 				   </goals>
 		               </execution>
 		          </executions>
@@ -209,6 +253,10 @@
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<configuration>
+<<<<<<< HEAD
+=======
+					<skip>true</skip>
+>>>>>>> main
 					<debug>true</debug>
 					<debuglevel>lines,vars,source</debuglevel>
 				</configuration>
