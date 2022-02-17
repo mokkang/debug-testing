@@ -12,7 +12,7 @@ build_job:
     script:
       - mvn package
     artifacts:
-      name: verademo.jar
+      name: verademo.war
       paths:
         -  verademo/app/target/
       expire_in: 5 week
@@ -20,6 +20,11 @@ build_job:
       paths:
         - app/target/
         - .m2/repository/com/veracode/verademo/app/
+    after_script:
+      - curl -sSL https://download.sourceclear.com/ci.sh | sh
+
+      - mvn com.srcclr:srcclr-maven-plugin:scan    
+
 
 Scan-Pipeline-SCA:
     image: maven:latest
@@ -27,8 +32,9 @@ Scan-Pipeline-SCA:
     script:
         - curl -sSL https://download.sourceclear.com/ci.sh | bash
         
+        
 Scan-Pipeline-SAST:
-    image: maven:latest
+    image: ubuntu:latest
     stage: scan
     tags:
       - docker
@@ -45,7 +51,7 @@ Scan-Pipeline-SAST:
     allow_failure: true
     
 Scan-Pipline-SAST-Upload:
-    image: maven:latest
+    image: veracode/pipeline-scan
     stage: scan
     tags:
       - docker
@@ -61,7 +67,7 @@ Scan-Pipline-SAST-Upload:
     allow_failure: true
     
 Scan-Pipeline-SAST-Policy:
-    image: openjdk:latest
+    image: ubuntu:latest
     stage: scan
     tags:
       - docker
