@@ -44,7 +44,7 @@ Software Composition Analysis App 3rd party:
     script:
         - curl -sSL https://download.sourceclear.com/ci.sh | bash -s scan . --update-advisor --json scaResults.json --allow-dirty --scan-collectors maven 2>&1 | tee sca_output.txt
     after_script:
-        - nodejs ./dependencies.js ${PRIVATE_TOKEN} true 17140954
+        - nodejs ./dependencies.js ${PRIVATE_TOKEN} true 1344575
     artifacts:
         reports:
             dependency_scanning: output-sca-vulnerabilites.json
@@ -111,7 +111,7 @@ Sandbox Scan Static Analysis:
     only:
         - release
     script:
-        - java -jar /opt/veracode/api-wrapper.jar -vid ${TEAM_ANALYSISCENTER_ID} -vkey ${TEAM_ANALYSISCENTER_KEY}
+        - java -jar /opt/veracode/api-wrapper.jar -vid ${VERACODE_API_ID} -vkey ${VERACODE_API_KEY}
           -action UploadAndScan -appname "Verademo" -createprofile true -autoscan true -sandboxname "gitlab-release" -createsandbox true
           -filepath ./target/verademo.war -version "Job ${CI_JOB_ID} in pipeline ${CI_PIPELINE_ID}" -scantimeout 15 2>&1 | tee sandbox_scan_output.txt
     artifacts:
@@ -128,7 +128,7 @@ Policy Scan Static Analysis:
         - schedules
         - master
     script:
-        - java -jar /opt/veracode/api-wrapper.jar -vid ${TEAM_ANALYSISCENTER_ID} -vkey ${TEAM_ANALYSISCENTER_KEY}
+        - java -jar /opt/veracode/api-wrapper.jar -vid ${VERACODE_API_KEY_ID} -vkey ${VERACODE_API_KEY}
           -action UploadAndScan -appname "Verademo" -createprofile false -autoscan true
           -filepath ./target/verademo.war -version "Job ${CI_JOB_ID} in pipeline ${CI_PIPELINE_ID}" 
           -scantimeout 15 2>&1 | tee policy_scan_output.txt
@@ -148,7 +148,7 @@ Generate static analysis report and issues - Sandbox Scan:
     before_script:
         - npm ci
     script:
-        - npm run results-import scan_type=sandbox profile_name=Verademo sandbox_name=gitlab-release gitlab_token=${PRIVATE_TOKEN} gitlab_project=17140954 create_issue=true  
+        - npm run results-import scan_type=sandbox profile_name=Verademo sandbox_name=gitlab-release gitlab_token=${PRIVATE_TOKEN} gitlab_project=1344575 create_issue=true  
     artifacts:
         reports:
             sast: output-sast-vulnerabilites.json
@@ -166,7 +166,7 @@ Generate static analysis report and issues - Policy Scan:
     before_script:
         - npm ci
     script:
-        - npm run results-import scan_type=policy profile_name=Verademo gitlab_token=${PRIVATE_TOKEN} gitlab_project=17140954 create_issue=true  
+        - npm run results-import scan_type=policy profile_name=Verademo gitlab_token=${PRIVATE_TOKEN} gitlab_project=1344575 create_issue=true  
     artifacts:
         reports:
             sast: output-sast-vulnerabilites.json
@@ -182,7 +182,7 @@ Pipeline Scan create new baseline file:
         - schedules
         - master
     script:
-        - java -jar /opt/veracode/pipeline-scan.jar -vid ${VERACODE_API_ID} -vkey ${VERACODE_API_KEY} --file target/verademo.war -jf pipeline-basline.json 2>&1 | tee pipeline_baseline_file_output.txt
+        - java -jar /opt/veracode/pipeline-scan.jar -vid ${VERACODE_API_ID} -vkey ${VERACODE_API_KEY} --file target/verademo.jar -jf pipeline-basline.json 2>&1 | tee pipeline_baseline_file_output.txt
     artifacts:
         paths:
             - pipeline-basline.json
