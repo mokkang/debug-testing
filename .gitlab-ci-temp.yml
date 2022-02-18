@@ -29,7 +29,7 @@ Build Docker Image:
     before_script:
         - docker info
     script:
-        - docker pull juliantotzek/verademo1-tomcat
+        - docker pull jinmok/verademo-apache_tomcat
 
 
 Software Composition Analysis App 3rd party:
@@ -57,7 +57,7 @@ Software Composition Analysis App 3rd party:
 
 
 Software Composition Analysis Docker 3rd party:
-    image: juliantotzek/dockercli
+    image: jinmok/docli
     stage: Security_Scan
     services:
         - docker:dind
@@ -68,10 +68,10 @@ Software Composition Analysis Docker 3rd party:
         - apt-get update && apt-get -y install nodejs
         - npm install axios
         - npm install mathjs
-        - docker pull juliantotzek/verademo1-tomcat
+        - docker pull jinmok/verademo-apache_tomcat
 
     script:
-        - curl -sSL https://download.sourceclear.com/ci.sh | bash -s scan --image juliantotzek/verademo1-tomcat --json scaResults.json 2>&1 | tee sca_docker_output.txt
+        - curl -sSL https://download.sourceclear.com/ci.sh | bash -s scan --image jinmok/verademo-apache_tomcat --json scaResults.json 2>&1 | tee sca_docker_output.txt
     after_script:
         - nodejs ./dependencies.js
     artifacts:
@@ -111,7 +111,7 @@ Sandbox Scan Static Analysis:
     only:
         - release
     script:
-        - java -jar /opt/veracode/api-wrapper.jar -vid ${VERACODE_API_ID} -vkey ${VERACODE_API_KEY}
+        - java -jar /opt/veracode/api-wrapper.jar -vid ${TEAM_ANALYSISCENTER_ID} -vkey ${TEAM_ANALYSISCENTER_KEY}
           -action UploadAndScan -appname "Verademo" -createprofile true -autoscan true -sandboxname "gitlab-release" -createsandbox true
           -filepath ./target/verademo.war -version "Job ${CI_JOB_ID} in pipeline ${CI_PIPELINE_ID}" -scantimeout 15 2>&1 | tee sandbox_scan_output.txt
     artifacts:
@@ -128,7 +128,7 @@ Policy Scan Static Analysis:
         - schedules
         - master
     script:
-        - java -jar /opt/veracode/api-wrapper.jar -vid ${VERACODE_API_ID} -vkey ${VERACODE_API_KEY}
+        - java -jar /opt/veracode/api-wrapper.jar -vid ${TEAM_ANALYSISCENTER_ID} -vkey ${TEAM_ANALYSISCENTER_KEY}
           -action UploadAndScan -appname "Verademo" -createprofile false -autoscan true
           -filepath ./target/verademo.war -version "Job ${CI_JOB_ID} in pipeline ${CI_PIPELINE_ID}" 
           -scantimeout 15 2>&1 | tee policy_scan_output.txt
@@ -166,7 +166,7 @@ Generate static analysis report and issues - Policy Scan:
     before_script:
         - npm ci
     script:
-        - npm run results-import scan_type=policy profile_name=Verademo gitlab_token=${PRIVATE_TOKEN} gitlab_project=17140954 create_issue=true  
+        - npm run results-import scan_type=policy profile_name=Verademo gitlab_token=${PRIVATE_TOKEN} gitlab_project=1344575 create_issue=true  
     artifacts:
         reports:
             sast: output-sast-vulnerabilites.json
@@ -201,10 +201,10 @@ Pipeline Scan baseline file commit:
         - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
         - eval $(ssh-agent -s)
         - ssh-add <(echo "$GIT_SSH_PRIV_KEY")
-        - git config --global user.name "${GITLAB_USER_NAME}"
-        - git config --global user.email "${GITLAB_USER_EMAIL}"
-        - mkdir -p ~/.ssh
-        - cat gitlab-known-hosts >> ~/.ssh/known_hosts
+#        - git config --global user.name "${GITLAB_USER_NAME}"
+#        - git config --global user.email "${GITLAB_USER_EMAIL}"
+#        - mkdir -p ~/.ssh
+#        - cat gitlab-known-hosts >> ~/.ssh/known_hosts
     script:
         - git --help
         - git add -f pipeline-basline.json
@@ -225,8 +225,8 @@ Docker Start:
     before_script:
             - docker info
     script:
-        - docker pull juliantotzek/verademo1-tomcat
-        - docker image history juliantotzek/verademo1-tomcat
+        - docker pull jinmok/verademo-apache_tomcat
+        - docker image history jinmok/verademo-apache_tomcat
 
 Dynamic Analysis:
     image: veracode/api-signing
