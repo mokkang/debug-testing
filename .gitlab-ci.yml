@@ -34,17 +34,19 @@ maven-package:
             - target/verademo.war
     allow_failure: true
 
-build-app:
-  #  <<: *run-for-all-calls
-    stage: exec
+build-app: 
+#<<: *run-for-all-calls
+    stage: build
     artifacts:
         paths:
-        - $OUTPUT_FILE
+            - $OUTPUT_FILE
         #expire_in: 1 week
     script: 
-        - mvn clean install
+        - 'mvn clean install $CI_BUILD_PATH app/'
         - chmod +x $OUTPUT_FILE
-        allow_failure: true
+    allow_failure: true
+
+
 sast-policy-scan:
     stage: security
     image: veracode/api-wrapper-java:latest
