@@ -26,6 +26,8 @@ maven-package:
     image: maven:3.8.3-openjdk-17
     script:
         - 'mvn $CI_BUILD_PATH clean package'
+        - echo 'THIS IS WHERE IT'S LOCATED'
+        - 'pwd && ls -la'
     artifacts:
         paths:
             - target/verademo.war
