@@ -40,9 +40,9 @@ build-app:
     artifacts:
         paths:
         - $OUTPUT_FILE
-        expire_in: 1 week
+        #expire_in: 1 week
     script: 
-        - mvn clean install
+        - mvn clean package $CI_PROJECT_DIR app/
         - chmod +x $OUTPUT_FILE
 
 sast-policy-scan:
