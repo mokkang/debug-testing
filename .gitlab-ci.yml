@@ -44,7 +44,7 @@ build-app:
     script: 
         - mvn clean install
         - chmod +x $OUTPUT_FILE
-
+        allow_failure: true
 sast-policy-scan:
     stage: security
     image: veracode/api-wrapper-java:latest
