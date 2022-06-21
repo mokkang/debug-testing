@@ -20,7 +20,7 @@ maven-package:
     stage: build
     image: maven:3.8.3-openjdk-17
     script:
-        - 'mvn package $CI_BUILD_PATH ./app/'
+        - 'mvn $CI_BUILD_PATH clean package ./app/'
     artifacts:
         paths:
             - target/*.war
