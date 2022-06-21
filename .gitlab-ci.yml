@@ -19,7 +19,7 @@ variables:
 cache:
     key: "$CI_JOB_NAME"
     paths:
-        - .m2/repository
+        - .m2/verademo
 
 maven-package:
     stage: build
