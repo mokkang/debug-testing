@@ -23,7 +23,7 @@ maven-package:
         - 'mvn $CI_BUILD_PATH clean package'
     artifacts:
         paths:
-            - target/*.war
+            - target/
     allow_failure: true
 
 
