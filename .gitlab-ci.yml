@@ -32,14 +32,14 @@ sast-policy-scan:
     image: veracode/api-wrapper-java:latest
     script:
         - java -jar /opt/veracode/api-wrapper.jar -vid ${VERACODE_API_ID} -vkey ${VERACODE_API_KEY}
-          -action uploadandscan -appname $CI_PROJECT_PATH_SLUG -filepath $VERACODE_FILEPATH
+          -action uploadandscan -appname $CI_PROJECT_PATH_SLUG -filepath .m2/repository/verademo.war
           -createprofile true -version "commit $CI_COMMIT_SHORT_SHA pipeline $CI_PIPELINE_ID job $CI_JOB_ID"
           -sandboxname $CI_COMMIT_REF_NAME -createsandbox true
     allow_failure: true
 #image: veracode/api-wrapper-java:latest
 sca-scan:
     stage: open-source
-    image: ubuntu:latest
+    image: bpercyshelde/srcclr:latest
     script:
         - export SRCCLR_SCM_NAME=$CI_PROJECT_PATH
         - export SRCCLR_SCM_URI=$CI_PROJECT_URL
