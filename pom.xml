@@ -6,7 +6,7 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<name>verademo</name>
 	<url>https://github.com/veracode/verademo</url>
-		<packaging>jar</packaging>
+		<packaging>war</packaging>
 	<repositories>
 		<repository>
 			<id>verademo</id>
