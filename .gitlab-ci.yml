@@ -20,10 +20,12 @@ maven-package:
     stage: build
     image: maven:3.8.3-openjdk-17
     script:
-        - 'mvn clean install ${CI_PROJECT_PATH}/app/pom.xml'
+        - 'mvn clean install ./app/pom.xml'
     artifacts:
         paths:
             - target/*.war
+    allow_failure: true
+
 
 sast-policy-scan:
     stage: security
