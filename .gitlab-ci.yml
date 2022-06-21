@@ -10,7 +10,7 @@ variables:
     MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true -DdeployAtEnd=true"
     IMAGE_TAG: $CI_PROJECT_PATH:$CI_COMMIT_SHORT_SHA
 
-    OUTPUT_FILE: "./target/verademo.war"
+    OUTPUT_FILE: ".m2/verademo/app/target/verademo.war"
     BASELINE_FILE: "pipeline_baseline.json"
     PROJECT_NAME: "Verademo_Gitlab"
     #UPDATE_BASELINE_COMMIT_MESSAGE: "Updating baseline on development branch from GitLab [skip ci]"
