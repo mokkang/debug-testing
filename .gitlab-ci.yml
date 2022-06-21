@@ -1,5 +1,6 @@
 stages:
     - build
+    - exec
     - security
     - open-source
     #- docker-build
@@ -19,7 +20,7 @@ variables:
 cache:
     key: "$CI_JOB_NAME"
     paths:
-        - .m2/verademo
+        - .m2/repository
 
 maven-package:
     stage: build
@@ -33,6 +34,16 @@ maven-package:
             - target/verademo.war
     allow_failure: true
 
+build-app:
+  #  <<: *run-for-all-calls
+    stage: exec
+    artifacts:
+        paths:
+        - $OUTPUT_FILE
+        expire_in: 1 week
+    script: 
+        - mvn clean install
+        - chmod +x $OUTPUT_FILE
 
 sast-policy-scan:
     stage: security
