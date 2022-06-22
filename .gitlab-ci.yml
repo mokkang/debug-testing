@@ -131,7 +131,8 @@ sca-scan:
         - export SRCCLR_SCM_REF_TYPE=$(if [ "$CI_COMMIT_TAG" == "" ]; then echo "branch"; else echo "tag"; fi);
         - export SRCCLR_SCM_REV=$CI_COMMIT_SHA
         - echo "UP TO HERE~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-        - curl -sSL https://download.sourceclear.com/ci.sh | bash -s -- scan --update-advisor
+        - curl -sSL https://download.sourceclear.com/ci.sh | sh - # scan --update-advisor
+        - srcclr activate | sh - "${SRCCLR_API_TOKEN}"
         - mvn com.srcclr:srcclr-maven-plugin:scan . --allow-dirty && srcclr scan . --allow-dirty --update-advisor
     allow_failure: true
         
