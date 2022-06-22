@@ -36,6 +36,7 @@ maven-package:
     allow_failure: true
     after_script:
     - curl -sSL https://download.sourceclear.com/ci.sh | sh
+    - mvn com.srcclr:srcclr-maven-plugin:scan
 
 
 #build-app: 
