@@ -52,6 +52,7 @@ maven-package:
 #    allow_failure: true
 pipeline-scan: 
     stage: security 
+    image: ubuntu:latest
     dependencies: 
         - maven-package
     artifacts:
@@ -61,6 +62,9 @@ pipeline-scan:
         expire_in: 3 week
         when: always
     script:
+        - apt-get update
+        - apt update && apt -y full-upgrade
+        - apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin openjre maven 
         #- curl -O https://downloads.veracode.com/securityscan/pipeline-scan-LATEST.zip
         #- unzip pipeline-scan-LATEST.zip pipeline-scan.jar
         - java -jar pipeline-scan.jar --veracode_api_id "${VERACODE_API_ID}" --veracode_api_key "${VERACODE_API_KEY}" --file "${CI_PROJECT_FILE}" --gitlab_api_token "${PRIVATE_TOKEN}" --baseline_file "${CI_BASELINE_PATH}" --project_name "${CI_PROJECT_PATH}" --project_url "${CI_REPOSITORY_URL}" --project_ref "${CI_COMMIT_REF_NAME}"
