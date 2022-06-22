@@ -16,7 +16,7 @@ variables:
     PROJECT_NAME: "Verademo_Gitlab"
     #UPDATE_BASELINE_COMMIT_MESSAGE: "Updating baseline on development branch from GitLab [skip ci]"
     REPOSITORY_NAME: "Verademo_Gitlab"
-
+    SRCCLR_API_TOKEN: "${SRCCLR_API_TOKEN}"
 cache:
     key: "$CI_JOB_NAME"
     paths:
