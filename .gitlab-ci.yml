@@ -8,7 +8,7 @@ build_app:
     image: maven:3.8.5-openjdk-8
     stage: build
     script: 
-        - mvn clean package -f app/pom.xml
+        - mvn clean package 
     artifacts:
         paths:
             - target/verademo.war
