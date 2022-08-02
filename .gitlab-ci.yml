@@ -33,20 +33,20 @@ veracode_sca_scan:
         # See: https://docs.github.com/en/github/authenticating-to-github/keeping-your-account-and-data-secure/creating-a-personal-access-token
         SRCCLR_SCM_TOKEN: $SCM_GITLAB
         # Sets the url of the project
-        #SRCCLR_SCM_URL: https://gitlab-ci-token:${SCM_GITLAB}@gitlab.com/${CI_PROJECT_PATH}.git
+        SRCCLR_SCM_URL: https://gitlab-ci-token:${SCM_GITLAB}@gitlab.com/${CI_PROJECT_PATH}.git
         # Generate a pull request when libraries contain calls to vulnerable methods
-        #SRCCLR_PR_ON: Low
+        SRCCLR_PR_ON: Low
         # Do not include potentially build-breaking upgrades in a pull request
-        #SRCCLR_NO_BREAKING_UPDATES: true
+        SRCCLR_NO_BREAKING_UPDATES: true
         # Generate a pull request if there are no open pull requests with the exact same changes
-        #SRCCLR_IGNORE_CLOSED_PRS: "true"
+        SRCCLR_IGNORE_CLOSED_PRS: "true"
     before_script:
-        #- 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
-        #- eval $(ssh-agent -s)
-        #- ssh-add <(echo "$GIT_SSH_PRIV_KEY")
-        #- mkdir -p ~/.ssh
-        #- echo "$SSH_KNOWN_HOSTS" >> ~/.ssh/known_hosts
-        #- chmod 644 ~/.ssh/known_hosts
+        - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
+        - eval $(ssh-agent -s)
+        - ssh-add <(echo "$GIT_SSH_PRIV_KEY")
+        - mkdir -p ~/.ssh
+        - echo "$SSH_KNOWN_HOSTS" >> ~/.ssh/known_hosts
+        - chmod 644 ~/.ssh/known_hosts
         - git config --global user.name "${GITLAB_USER_NAME}"
         - git config --global user.email "${GITLAB_USER_EMAIL}"
         - git remote rm origin && git remote add origin git@gitlab.com:$CI_PROJECT_PATH.git
@@ -57,4 +57,4 @@ veracode_sca_scan:
         - git branch
 
     script:
-        - curl -sSL https://download.sourceclear.com/ci.sh | sh -s scan .  --update-advisor 
+        - curl -sSL https://download.sourceclear.com/ci.sh | sh -s scan .  --update-advisor --loud --scm-ref-type branch --sbom-cdx-output > "${CI_COMMIT_SHA:0:8} - Job $CI_JOB_ID".cdx.json
