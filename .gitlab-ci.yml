@@ -57,4 +57,4 @@ veracode_sca_scan:
         - git branch
 
     script:
-        - curl -sSL https://download.sourceclear.com/ci.sh | sh -s scan .  --update-advisor --loud 
+        - curl -sSL https://download.sourceclear.com/ci.sh | sh -s scan .  --update-advisor --loud --SRCCLR_PR_ON true
