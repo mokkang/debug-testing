@@ -1,6 +1,0 @@
-scan-my-java-app:
-  image: veracode/pipeline-scan:latest
-  script:
-    - java -jar /opt/veracode/pipeline-scan.jar 
-        -vid $VERACODE_API_KEY_ID -vkey $VERACODE_API_KEY_SECRET 
-        --file /root/docker/docker_all_shit/verademo/app/verademo.jar
