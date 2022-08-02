@@ -37,7 +37,7 @@ veracode_sca_scan:
         # Generate a pull request when libraries contain calls to vulnerable methods
         SRCCLR_PR_ON: Low
         # Do not include potentially build-breaking upgrades in a pull request
-        SRCCLR_NO_BREAKING_UPDATES: true
+        #SRCCLR_NO_BREAKING_UPDATES: true
         # Generate a pull request if there are no open pull requests with the exact same changes
         SRCCLR_IGNORE_CLOSED_PRS: "true"
     before_script:
@@ -57,4 +57,4 @@ veracode_sca_scan:
         - git branch
 
     script:
-        - curl -sSL https://download.sourceclear.com/ci.sh | sh -s scan .  --update-advisor --loud --scm-ref-type branch --sbom-cdx-output > "${CI_COMMIT_SHA:0:8} - Job $CI_JOB_ID".cdx.json
+        - curl -sSL https://download.sourceclear.com/ci.sh | sh -s scan .  --update-advisor --loud --scm-ref-type branch --sbom-cdx-output > "${CI_COMMIT} - Job $CI_JOB_ID".cdx.json
