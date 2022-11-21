@@ -1,58 +1,134 @@
 stages:
     - build
     - security
-#    - deploy
+    - docker-build
+    - container-security
+    #- docker-build
+    #- container-security
 
-# for a simple node.js build, this step is (almost) meaningless
-build_app:
-    image: maven:3.8.5-openjdk-8
+variables:
+    MAVEN_OPTS: "-Dhttps.protocols=TLSv1.2 -Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=WARN -Dorg.slf4j.simpleLogger.showDateTime=true -Djava.awt.headless=true"
+    MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true -DdeployAtEnd=true"
+    IMAGE_TAG: $CI_PROJECT_PATH:$CI_COMMIT_SHORT_SHA
+
+    OUTPUT_FILE: ".m2/verademo/app/target/verademo.war"
+    BASELINE_FILE: "pipeline_baseline.json"
+    PROJECT_NAME: "Verademo_Gitlab"
+    #UPDATE_BASELINE_COMMIT_MESSAGE: "Updating baseline on development branch from GitLab [skip ci]"
+    REPOSITORY_NAME: "Verademo_Gitlab"
+
+cache:
+    key: "$CI_JOB_NAME"
+    paths:
+        - .m2/repository
+
+maven-package:
     stage: build
-    script: 
-        - mvn clean package ./pom.xml
+    image: maven:3.8.3-openjdk-17
+    script:
+        - 'mvn $CI_BUILD_PATH clean package'
+        - echo 'THIS IS WHERE ITS LOCATED'
+        - 'pwd && ls -la'
     artifacts:
         paths:
             - target/verademo.war
-
-veracode_scan:
-    image: veracode/api-wrapper-java:latest
-    stage: security
-    script:
-        # the scan WILL fail, so just fire and forget
-        - java -jar /opt/veracode/api-wrapper.jar -vid $VERACODE_API_ID -vkey $VERACODE_API_KEY -action UploadAndScan -appname "VeraDemo" -createprofile true -filepath target/verademo.war -version "Commit ${CI_COMMIT_SHA:0:8} - Job $CI_JOB_ID"
     allow_failure: true
 
-veracode_sca_scan:
-    image: maven:3.8.5-openjdk-8
+pipeline-scan:  
     stage: security
-    variables:
-        # SCA agent activation token
-        SRCCLR_API_TOKEN: $SRCCLR_API_TOKEN
-        SRCCLR_SCM_TYPE: GITLAB
-        # See: https://docs.github.com/en/github/authenticating-to-github/keeping-your-account-and-data-secure/creating-a-personal-access-token
-        SRCCLR_SCM_TOKEN: $SCM_GITLAB
-        # Sets the url of the project
-        SRCCLR_SCM_URL: https://gitlab-ci-token:${SCM_GITLAB}@gitlab.com/${CI_PROJECT_PATH}.git
-        # Generate a pull request when libraries contain calls to vulnerable methods
-        SRCCLR_PR_ON: Low
-        # Do not include potentially build-breaking upgrades in a pull request
-        #SRCCLR_NO_BREAKING_UPDATES: true
-        # Generate a pull request if there are no open pull requests with the exact same changes
-        SRCCLR_IGNORE_CLOSED_PRS: "true"
-    before_script:
-        - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
-        - eval $(ssh-agent -s)
-        #- ssh-add <(echo "$GIT_SSH_PRIV_KEY")
-        - mkdir -p ~/.ssh
-        - echo "$SSH_KNOWN_HOSTS" >> ~/.ssh/known_hosts
-        - chmod 644 ~/.ssh/known_hosts
-        - git config --global user.name "${GITLAB_USER_NAME}"
-        - git config --global user.email "${GITLAB_USER_EMAIL}"
-        - git remote rm origin && git remote add origin git@gitlab.com:$CI_PROJECT_PATH.git
-        # Set the main branch to match your repo
-        - git checkout -b "main"
-        - git checkout -b "master"
-        - git status
-        - git branch
-
+    image: veracode/api-wrapper-java:latest
+  #rules: 
+  #- if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_COMMIT_BRANCH != "develop"'
+  #  when: always
+  #- when: never
+  #stage: security
     script:
-        - curl -sSL https://download.sourceclear.com/ci.sh | sh -s scan .  --update-advisor --loud --pull-request
+ #       - echo "Starting Pipeline Scan"
+ #       - curl -O https://downloads.veracode.com/securityscan/pipeline-scan-LATEST.zip
+ #       - unzip pipeline-scan-LATEST.zip pipeline-scan.jar
+        - java -jar pipeline-scan.jar -veracode_api_id "${VERACODE_API_ID}" -veracode_api_key "${VERACODE_API_KEY}" -file $OUTPUT_FILE -project_name $CI_PROJECT_PATH_SLUG -bf baseline.json
+
+#build-app: 
+#<<: *run-for-all-calls
+#    stage: build
+#    artifacts:
+#        paths:
+#            - $OUTPUT_FILE
+        #expire_in: 1 week
+#    script: 
+#        - 'mvn clean install $CI_BUILD_PATH app/'
+#        - chmod +x $OUTPUT_FILE
+#    allow_failure: true
+
+
+sast-policy-scan:
+    stage: security
+    image: veracode/api-wrapper-java:latest
+    script:
+        - java -jar /opt/veracode/api-wrapper.jar -vid "${VERACODE_API_ID}" -vkey "${VERACODE_API_KEY}" -action UploadAndScan -appname $CI_PROJECT_PATH_SLUG -filepath /builds/jmokkang/verademo/target/verademo.war -createprofile false -version "commit $CI_COMMIT_SHORT_SHA pipeline $CI_PIPELINE_ID job $CI_JOB_ID" -sandboxname $CI_COMMIT_REF_NAME -createsandbox false
+       # - java -jar /opt/veracode/api-wrapper.jar -vid '${VERACODE_API_ID}' -vkey '${VERACODE_API_KEY}' -action UploadAndScan -appname $CI_PROJECT_PATH_SLUG -filepath=target/verademo.war -createprofile true -version "commit $CI_COMMIT_SHORT_SHA pipeline $CI_PIPELINE_ID job $CI_JOB_ID" -sandboxname $CI_COMMIT_REF_NAME -createsandbox true
+        #- java -jar /opt/veracode/api-wrapper.jar -vid '${VERACODE_API_ID}' -vkey '${VERACODE_API_KEY}' -action UploadAndScan -appname $CI_PROJECT_PATH_SLUG -filepath 'target/verademo.war' -createprofile true -version "commit $CI_COMMIT_SHORT_SHA pipeline $CI_PIPELINE_ID job $CI_JOB_ID" -sandboxname $CI_COMMIT_REF_NAME -createsandbox true
+    allow_failure: true
+#image: veracode/api-wrapper-java:latest
+sca-scan:
+    stage: security
+    image: maven:3.8.3-openjdk-17
+    #only:
+    #    - branches
+    #services:
+    #    - docker:19.03.12-dind
+   # before_script:
+        #- apk add curl
+   #     - '' 
+  #      - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  #      - docker pull $CI_REGISTRY/$IMAGE_TAG
+    script:
+        #- sudo apt install -y curl
+        - curl -sSL https://download.sourceclear.com/ci.sh | sh -s scan . --allow-dirty --update-advisor --recursive 
+    allow_failure: true
+
+.publish-to-docker:
+    stage: docker-build
+    image: docker:19.03.12
+    services:
+        - docker:19.03.12-dind
+    before_script:
+        - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    script:
+        - docker built -t $IMAGE_TAG .
+        - docker tag $IMAGE_TAG $CI_REGISTRY/$IMAGE_TAG
+        - docker push $CI_REGISTRY/$IMAGE_TAG
+    allow_failure: true
+
+publish-to-docker-branches:
+    extends: .publish-to-docker
+    only: 
+        - branches
+sca-container-scan-branches:
+    stage: container-security
+    image: docker:19.03.12
+    only:
+        - branches
+    services:
+        - docker:19.03.12-dind
+    before_script:
+        - apk add curl
+        - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+        - docker pull $CI_REGISTRY/$IMAGE_TAG
+    script:
+        - curl -sSL https://download.sourceclear.com/ci.sh | sh -s scan --image $CI_REGISTRY/$IMAGE_TAG
+#publish-to-docker-releases:
+#    extends: .publish-to-docker
+#    only:
+#        - tags
+#    variables:
+
+#        - export SRCCLR_SCM_NAME=$CI_PROJECT_PATH
+#        - export SRCCLR_SCM_URI=$CI_PROJECT_URL
+#        - export SRCCLR_SCM_REF=$(if [ "$CI_COMMIT_TAG" == "" ]; then echo $CI_COMMIT_REF_NAME; else echo $CI_COMMIT_TAG; fi);
+#        - export SRCCLR_SCM_REF_TYPE=$(if [ "$CI_COMMIT_TAG" == "" ]; then echo "branch"; else echo "tag"; fi);
+#        - export SRCCLR_SCM_REV=$CI_COMMIT_SHA
+#        - curl -sSL https://download.sourceclear.com/ci.sh | bash -s -- scan --update-advisor
+#    allow_failure: true
+    allow_failure: true
+        
