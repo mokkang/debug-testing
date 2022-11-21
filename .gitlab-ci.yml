@@ -26,12 +26,12 @@ maven-package:
     stage: build
     image: maven:3.8.3-openjdk-17
     script:
-        - 'mvn $CI_BUILD_PATH clean package'
+        - 'mvn clean package -f ./app/pom.xml'
         - echo 'THIS IS WHERE ITS LOCATED'
         - 'pwd && ls -la'
     artifacts:
         paths:
-            - target/verademo.war
+            - app/target/verademo.war
     allow_failure: true
 
 pipeline-scan:  
@@ -46,7 +46,7 @@ pipeline-scan:
  #       - echo "Starting Pipeline Scan"
  #       - curl -O https://downloads.veracode.com/securityscan/pipeline-scan-LATEST.zip
  #       - unzip pipeline-scan-LATEST.zip pipeline-scan.jar
-        - java -jar pipeline-scan.jar -veracode_api_id "${VERACODE_API_ID}" -veracode_api_key "${VERACODE_API_KEY}" -file $OUTPUT_FILE -project_name $CI_PROJECT_PATH_SLUG -bf baseline.json
+        - java -jar pipeline-scan.jar -veracode_api_id "${VERACODE_API_ID}" -veracode_api_key "${VERACODE_API_KEY}" -file $OUTPUT_FILE -project_name $CI_PROJECT_PATH_SLUG 
 
 #build-app: 
 #<<: *run-for-all-calls
@@ -65,7 +65,7 @@ sast-policy-scan:
     stage: security
     image: veracode/api-wrapper-java:latest
     script:
-        - java -jar /opt/veracode/api-wrapper.jar -vid "${VERACODE_API_ID}" -vkey "${VERACODE_API_KEY}" -action UploadAndScan -appname $CI_PROJECT_PATH_SLUG -filepath /builds/jmokkang/verademo/target/verademo.war -createprofile false -version "commit $CI_COMMIT_SHORT_SHA pipeline $CI_PIPELINE_ID job $CI_JOB_ID" -sandboxname $CI_COMMIT_REF_NAME -createsandbox false
+        - java -jar /opt/veracode/api-wrapper.jar -vid "${VERACODE_API_ID}" -vkey "${VERACODE_API_KEY}" -action UploadAndScan -appname $CI_PROJECT_PATH_SLUG -filepath /builds/jmokkang/verademo/target/verademo.war -createprofile true -version "commit $CI_COMMIT_SHORT_SHA pipeline $CI_PIPELINE_ID job $CI_JOB_ID" -sandboxname $CI_COMMIT_REF_NAME -createsandbox true
        # - java -jar /opt/veracode/api-wrapper.jar -vid '${VERACODE_API_ID}' -vkey '${VERACODE_API_KEY}' -action UploadAndScan -appname $CI_PROJECT_PATH_SLUG -filepath=target/verademo.war -createprofile true -version "commit $CI_COMMIT_SHORT_SHA pipeline $CI_PIPELINE_ID job $CI_JOB_ID" -sandboxname $CI_COMMIT_REF_NAME -createsandbox true
         #- java -jar /opt/veracode/api-wrapper.jar -vid '${VERACODE_API_ID}' -vkey '${VERACODE_API_KEY}' -action UploadAndScan -appname $CI_PROJECT_PATH_SLUG -filepath 'target/verademo.war' -createprofile true -version "commit $CI_COMMIT_SHORT_SHA pipeline $CI_PIPELINE_ID job $CI_JOB_ID" -sandboxname $CI_COMMIT_REF_NAME -createsandbox true
     allow_failure: true
@@ -87,36 +87,36 @@ sca-scan:
         - curl -sSL https://download.sourceclear.com/ci.sh | sh -s scan . --allow-dirty --update-advisor --recursive 
     allow_failure: true
 
-.publish-to-docker:
-    stage: docker-build
-    image: docker:19.03.12
-    services:
-        - docker:19.03.12-dind
-    before_script:
-        - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    script:
-        - docker built -t $IMAGE_TAG .
-        - docker tag $IMAGE_TAG $CI_REGISTRY/$IMAGE_TAG
-        - docker push $CI_REGISTRY/$IMAGE_TAG
-    allow_failure: true
+#.publish-to-docker:
+ #   stage: docker-build
+ #   image: docker:19.03.12
+ #   services:
+ #       - docker:19.03.12-dind
+ #   before_script:
+ #       - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+ #   script:
+ #       - docker built -t $IMAGE_TAG .
+ #       - docker tag $IMAGE_TAG $CI_REGISTRY/$IMAGE_TAG
+ #       - docker push $CI_REGISTRY/$IMAGE_TAG
+ #   allow_failure: true
 
-publish-to-docker-branches:
-    extends: .publish-to-docker
-    only: 
-        - branches
-sca-container-scan-branches:
-    stage: container-security
-    image: docker:19.03.12
-    only:
-        - branches
-    services:
-        - docker:19.03.12-dind
-    before_script:
-        - apk add curl
-        - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-        - docker pull $CI_REGISTRY/$IMAGE_TAG
-    script:
-        - curl -sSL https://download.sourceclear.com/ci.sh | sh -s scan --image $CI_REGISTRY/$IMAGE_TAG
+#publish-to-docker-branches:
+#    extends: .publish-to-docker
+#    only: 
+#        - branches
+#sca-container-scan-branches:
+#    stage: container-security
+#    image: docker:19.03.12
+#    only:
+#        - branches
+#    services:
+#        - docker:19.03.12-dind
+#    before_script:
+#        - apk add curl
+#        - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+#        - docker pull $CI_REGISTRY/$IMAGE_TAG
+#    script:
+#        - curl -sSL https://download.sourceclear.com/ci.sh | sh -s scan --image $CI_REGISTRY/$IMAGE_TAG
 #publish-to-docker-releases:
 #    extends: .publish-to-docker
 #    only:
@@ -130,5 +130,5 @@ sca-container-scan-branches:
 #        - export SRCCLR_SCM_REV=$CI_COMMIT_SHA
 #        - curl -sSL https://download.sourceclear.com/ci.sh | bash -s -- scan --update-advisor
 #    allow_failure: true
-    allow_failure: true
+#    allow_failure: true
         
