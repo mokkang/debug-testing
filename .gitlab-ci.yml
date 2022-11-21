@@ -34,19 +34,21 @@ maven-package:
             - app/target/verademo.war
     allow_failure: true
 
-pipeline-scan:  
+Pipeline Scan Static Analysis:
+    image: veracode/pipeline-scan:latest
     stage: security
-    image: veracode/api-wrapper-java:latest
-  #rules: 
-  #- if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_COMMIT_BRANCH != "develop"'
-  #  when: always
-  #- when: never
-  #stage: security
+    only:
+        - development
     script:
- #       - echo "Starting Pipeline Scan"
- #       - curl -O https://downloads.veracode.com/securityscan/pipeline-scan-LATEST.zip
- #       - unzip pipeline-scan-LATEST.zip pipeline-scan.jar
-        - java -jar pipeline-scan.jar -veracode_api_id "${VERACODE_API_ID}" -veracode_api_key "${VERACODE_API_KEY}" -file $OUTPUT_FILE -project_name $CI_PROJECT_PATH_SLUG --issue_details true 
+        - java -jar /opt/veracode/pipeline-scan.jar -vid ${VERACODE_API_ID} -vkey ${VERACODE_API_KEY} --file app/target/verademo.war --issue_details true --gl_issue_generation true -jf results.json
+        # 2>&1 | tee pipeline_scan_text_output.txt
+    artifacts:
+        paths:
+            - results.json
+            - pipeline_scan_text_output.txt
+        when: always
+        name: "veracode-pipeline-$CI_COMMIT_REF_NAME-$CI_COMMIT_SHORT_SHA"
+ #   allow_failure: false
     allow_failure: true
 
 #build-app: 
